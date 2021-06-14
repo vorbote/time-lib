@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * DateTime class supports useful methods to times.
@@ -17,27 +18,19 @@ import java.util.Date;
 public class DateTime implements
         Comparable<DateTime>, Serializable {
 
-    private long timestamp = System.currentTimeMillis();
-    private String pattern = "yyyy-MM-dd HH:mm:ss";
-
     /**
-     * Generate a new DateTime instance of {@code current} time.
-     */
-    public DateTime() {
-    }
-
-    /**
-     * Generate a specified {@code DateTime} instance of the date.
+     * Check whether the year, month and the date is in the
+     * correct range.
      *
-     * @param year  The year (1 through 9999).
-     * @param month The month (1 through 12).
-     * @param date  The day (1 through the number of days in month).
+     * @param year   The year (1 through 9999).
+     * @param month  The month (1 through 12).
+     * @param date   The day (1 through the number of days in month).
+     * @param hour   The hour (0 through 23).
+     * @param minute The minute (0 through 59).
+     * @param second The second (0 through 59).
+     * @param mills  The mills (0 through 999).
      */
-    @SuppressWarnings("all")
-    public DateTime(int year, int month, int date) {
-        // Get the instance of calendar.
-        var calendar = Calendar.getInstance();
-
+    private static void check(int year, int month, int date, int hour, int minute, int second, int mills) {
         // The month number should between 1 ~ 12
         if (MathUtil.IsNotBetween(month, 1, 12)) {
             throw new TimeOutRangeException(StringUtil.Format("The month: {} is out of range of (1 ~ 12).",
@@ -75,7 +68,54 @@ public class DateTime implements
                     date, dayInTheMonth));
         }
 
+        // Check the hour
+        if (MathUtil.IsNotBetween(hour, 0, 23)) {
+            throw new TimeOutRangeException(StringUtil.Format("The hour: {} is out of range of (0 ~ 23)", hour));
+        }
+
+        // Check the minute
+        if (MathUtil.IsNotBetween(minute, 0, 59)) {
+            throw new TimeOutRangeException(StringUtil.Format("The minute: {} is out of range of (0 ~ 59)", minute));
+        }
+
+        // Check the second
+        if (MathUtil.IsNotBetween(minute, 0, 59)) {
+            throw new TimeOutRangeException(StringUtil.Format("The second: {} is out of range of (0 ~ 59)", second));
+        }
+
+        // Check the mills
+        if (MathUtil.IsNotBetween(minute, 0, 999)) {
+            throw new TimeOutRangeException(StringUtil.Format("The mills: {} is out of range of (0 ~ 59)", hour));
+        }
+    }
+
+    private long timestamp = System.currentTimeMillis();
+    private String pattern = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * Generate a new DateTime instance of {@code current} time.
+     */
+    public DateTime() {
+    }
+
+    /**
+     * Generate a specified {@code DateTime} instance of the date.
+     *
+     * @param year  The year (1 through 9999).
+     * @param month The month (1 through 12).
+     * @param date  The day (1 through the number of days in month).
+     */
+    @SuppressWarnings("all")
+    public DateTime(int year, int month, int date) {
+        // Get the instance of calendar.
+        var calendar = Calendar.getInstance();
+
+        check(year, month, date, 0, 0, 0, 0);
+
         calendar.set(year, month - 1, date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
         timestamp = calendar.getTimeInMillis();
     }
 
@@ -90,27 +130,25 @@ public class DateTime implements
      * @param second The second (0 through 59).
      */
     public DateTime(int year, int month, int date, int hour, int minute, int second) {
-        this(year, month, date);
-        // Check the hour
-        if (MathUtil.IsNotBetween(hour, 0, 23)) {
-            throw new TimeOutRangeException(StringUtil.Format("The hour: {} is out of range of (0 ~ 23)", hour));
-        }
+        check(year, month, date, hour, minute, second, 0);
+
+        var calendar = Calendar.getInstance();
+
+        // Set the year, month and date
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DATE, date);
+
         // Add the hours to the timestamp
-        timestamp += 3600L * hour * 1000L;
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
 
-        // Check the minute
-        if (MathUtil.IsNotBetween(minute, 0, 59)) {
-            throw new TimeOutRangeException(StringUtil.Format("The minute: {} is out of range of (0 ~ 59)", minute));
-        }
         // Add the minutes to the timestamp
-        timestamp += 60L * minute * 1000L;
+        calendar.set(Calendar.MINUTE, minute);
 
-        // Check the second
-        if (MathUtil.IsNotBetween(minute, 0, 59)) {
-            throw new TimeOutRangeException(StringUtil.Format("The second: {} is out of range of (0 ~ 59)", second));
-        }
         // Add the second to the timestamp
-        timestamp += second * 1000L;
+        calendar.set(Calendar.SECOND, second);
+
+        this.timestamp = calendar.getTimeInMillis();
     }
 
     /**
@@ -125,14 +163,29 @@ public class DateTime implements
      * @param mills  The mills (0 through 999).
      */
     public DateTime(int year, int month, int date, int hour, int minute, int second, int mills) {
-        this(year, month, date, hour, minute, second);
+        check(year, month, date, hour, minute, second, mills);
 
-        // Check the mills
-        if (MathUtil.IsNotBetween(minute, 0, 999)) {
-            throw new TimeOutRangeException(StringUtil.Format("The mills: {} is out of range of (0 ~ 59)", hour));
-        }
+        var calendar = Calendar.getInstance();
+
+        // Set the year, month and date
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DATE, date);
+
+        // Add the hours to the timestamp
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+
         // Add the minutes to the timestamp
-        timestamp += mills;
+        calendar.set(Calendar.MINUTE, minute);
+
+        // Add the second to the timestamp
+        calendar.set(Calendar.SECOND, second);
+
+        // Add the mills to the timestamp
+        calendar.set(Calendar.MILLISECOND, mills);
+
+        // Add the minutes to the timestamp
+        timestamp = calendar.getTimeInMillis();
     }
 
     /**
@@ -161,6 +214,162 @@ public class DateTime implements
         calendar.add(Calendar.SECOND, ts.getSecond());
         calendar.add(Calendar.MILLISECOND, ts.getMills());
         this.timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of days to the value of this instance.
+     *
+     * @param days A number of whole and fractional days. The value
+     *             parameter can be negative or positive.
+     * @return An object whose value is the sum of the date and
+     * time represented by this instance and the number of
+     * days represented by value.
+     */
+    public DateTime AddDays(double days) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // Calculate the times.
+        var seconds = (int) (days * 24 * 60 * 60);
+
+        // Add time
+        calendar.add(Calendar.SECOND, seconds);
+        timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of hours to the value of this instance.
+     *
+     * @param hours A number of whole and fractional hours. The
+     *              value parameter can be negative or positive.
+     * @return An object whose value is the sum of the date and time
+     * represented by this instance and the number of hours
+     * represented by value.
+     */
+    public DateTime AddHours(double hours) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // Calculate the seconds to be added.
+        var seconds = (int) (hours * 60 * 60);
+
+        // Add to the calendar instance.
+        calendar.add(Calendar.SECOND, seconds);
+        timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of hours to the value of this instance.
+     *
+     * @param milliseconds A number of whole and fractional
+     *                     millisecond. The value parameter can be
+     *                     negative or positive.
+     * @return An object whose value is the sum of the date and time
+     * represented by this instance and the number of
+     * milliseconds represented by value.
+     */
+    public DateTime AddMilliseconds(int milliseconds) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // Add to the calendar instance.
+        calendar.add(Calendar.MILLISECOND, milliseconds);
+        timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of hours to the value of this instance.
+     *
+     * @param minutes A number of whole and fractional minutes. The
+     *                value parameter can be negative or positive.
+     * @return An object whose value is the sum of the date and time
+     * represented by this instance and the number of minutes
+     * represented by value.
+     */
+    public DateTime AddMinutes(double minutes) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        var seconds = (int) (minutes * 60);
+
+        // Add to the calendar instance.
+        calendar.add(Calendar.SECOND, seconds);
+        timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of months to the value of this instance.
+     *
+     * @param months A number of months. The months parameter can be
+     *               negative or positive.
+     * @return An object whose value is the sum of the date and time
+     * represented by this instance and months.
+     */
+    public DateTime AddMonths(int months) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // Add to the calendar instance.
+        calendar.add(Calendar.MONTH, months);
+        timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of seconds to the value of this instance.
+     *
+     * @param seconds A number of whole and fractional seconds. The
+     *                value parameter can be negative or positive.
+     * @return An object whose value is the sum of the date and time
+     * represented by this instance and the number of seconds
+     * represented by value.
+     */
+    public DateTime AddSeconds(int seconds) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // Add to the calendar instance.
+        calendar.add(Calendar.SECOND, seconds);
+        timestamp = calendar.getTimeInMillis();
+        return this;
+    }
+
+    /**
+     * Returns a new {@code DateTime} that adds the specified number
+     * of years to the value of this instance.
+     *
+     * @param years A number of years. The value parameter can be
+     *              negative or positive.
+     * @return An object whose value is the sum of the date and time
+     * represented by this instance and the number of years
+     * represented by value.
+     */
+    public DateTime AddYears(int years) {
+        // Set the current time to the time of the current instance.
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        // Add to the calendar instance.
+        calendar.add(Calendar.YEAR, years);
+        timestamp = calendar.getTimeInMillis();
         return this;
     }
 
@@ -207,7 +416,7 @@ public class DateTime implements
      *
      * @param timestamp The timestamp.
      */
-    public void Timestamp(long timestamp) {
+    private void Timestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -220,6 +429,13 @@ public class DateTime implements
         return this.timestamp;
     }
 
+    /**
+     * This method {@code o.toString()} will convert the timestamp
+     * to a string time expression in the specified format.
+     *
+     * @return A string time expression.
+     * @see #ToString()
+     */
     @Override
     public String toString() {
         final var formatter = new SimpleDateFormat(pattern);
@@ -227,6 +443,12 @@ public class DateTime implements
         return formatter.format(date);
     }
 
+    /**
+     * This method {@code o.toString()} will convert the timestamp
+     * to a string time expression in the specified format.
+     *
+     * @return A string time expression.
+     */
     public String ToString() {
         final var formatter = new SimpleDateFormat(pattern);
         final var date = new Date(timestamp);
@@ -247,7 +469,7 @@ public class DateTime implements
      */
     @Override
     public int compareTo(DateTime o) {
-        return 0;
+        return (int) (this.Timestamp() - o.Timestamp());
     }
 
     /**
@@ -267,11 +489,48 @@ public class DateTime implements
     }
 
     /**
+     * Returns a value indicating whether the value of this instance is equal
+     * to the value of the specified {@code DateTime} instance.
+     *
+     * @param o The object to compare to this instance.
+     * @return True if the value parameter equals the value of this instance;
+     * Otherwise, false.
+     */
+    public boolean Equals(DateTime o) {
+        return this.Timestamp() == o.Timestamp();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DateTime dateTime = (DateTime) o;
+        return timestamp == dateTime.timestamp;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timestamp);
+    }
+
+    /**
      * Get the current Date and Time.
      *
      * @return The current Date and Time.
      */
     public static DateTime Now() {
         return new DateTime();
+    }
+
+    /**
+     * Returns an indication whether the specified year is a leap year.
+     *
+     * @return An indication whether the specified year is a leap year.
+     */
+    public boolean IsLeapYear() {
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(Timestamp());
+        var year = calendar.get(Calendar.YEAR);
+        return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
     }
 }

@@ -15,7 +15,7 @@ public class Draft {
 
     @Test
     public void test02() {
-        var now = DateTime.Now();
+        var now = new DateTime(2021, 12, 11);
         System.out.println(now);
     }
 }
