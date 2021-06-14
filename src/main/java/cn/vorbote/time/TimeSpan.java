@@ -2,6 +2,11 @@ package cn.vorbote.time;
 
 import lombok.*;
 
+/**
+ * Represents a time interval.
+ *
+ * @author vorbote thills@vorbote.cn
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
