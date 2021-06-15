@@ -79,12 +79,12 @@ public class DateTime implements
         }
 
         // Check the second
-        if (MathUtil.IsNotBetween(minute, 0, 59)) {
+        if (MathUtil.IsNotBetween(second, 0, 59)) {
             throw new TimeOutRangeException(StringUtil.Format("The second: {} is out of range of (0 ~ 59)", second));
         }
 
         // Check the mills
-        if (MathUtil.IsNotBetween(minute, 0, 999)) {
+        if (MathUtil.IsNotBetween(mills, 0, 999)) {
             throw new TimeOutRangeException(StringUtil.Format("The mills: {} is out of range of (0 ~ 59)", hour));
         }
     }
@@ -116,6 +116,7 @@ public class DateTime implements
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         timestamp = calendar.getTimeInMillis();
     }
 
@@ -147,6 +148,8 @@ public class DateTime implements
 
         // Add the second to the timestamp
         calendar.set(Calendar.SECOND, second);
+
+        calendar.set(Calendar.MILLISECOND, 0);
 
         this.timestamp = calendar.getTimeInMillis();
     }
@@ -206,13 +209,11 @@ public class DateTime implements
     public DateTime Add(TimeSpan ts) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(timestamp));
-        calendar.add(Calendar.YEAR, ts.getYear());
-        calendar.add(Calendar.MONTH, ts.getMonth());
-        calendar.add(Calendar.DATE, ts.getDate());
-        calendar.add(Calendar.HOUR, ts.getHour());
-        calendar.add(Calendar.MINUTE, ts.getMinute());
-        calendar.add(Calendar.SECOND, ts.getSecond());
-        calendar.add(Calendar.MILLISECOND, ts.getMills());
+        calendar.add(Calendar.DATE, ts.getDays());
+        calendar.add(Calendar.HOUR, ts.getHours());
+        calendar.add(Calendar.MINUTE, ts.getMinutes());
+        calendar.add(Calendar.SECOND, ts.getSeconds());
+        calendar.add(Calendar.MILLISECOND, ts.getMilliseconds());
         this.timestamp = calendar.getTimeInMillis();
         return this;
     }
@@ -382,15 +383,57 @@ public class DateTime implements
     public DateTime Minus(TimeSpan ts) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date(timestamp));
-        calendar.add(Calendar.YEAR, -ts.getYear());
-        calendar.add(Calendar.MONTH, -ts.getMonth());
-        calendar.add(Calendar.DATE, -ts.getDate());
-        calendar.add(Calendar.HOUR, -ts.getHour());
-        calendar.add(Calendar.MINUTE, -ts.getMinute());
-        calendar.add(Calendar.SECOND, -ts.getSecond());
-        calendar.add(Calendar.MILLISECOND, -ts.getMills());
+        calendar.add(Calendar.DATE, -ts.getDays());
+        calendar.add(Calendar.HOUR, -ts.getHours());
+        calendar.add(Calendar.MINUTE, -ts.getMinutes());
+        calendar.add(Calendar.SECOND, -ts.getSeconds());
+        calendar.add(Calendar.MILLISECOND, -ts.getMilliseconds());
         this.timestamp = calendar.getTimeInMillis();
         return this;
+    }
+
+    /**
+     * A {@code DateTime} instance minus another instance will
+     * return a {@code TimeSpan} instance, this
+     * {@code TimeSpan} instance will tell you how many days,
+     * hours, minutes, seconds and milliseconds between them.
+     *
+     * @param time Another {@code DateTime} instance
+     * @return A {@code TimeSpan} instance which will tell
+     * you how many days, hours, minutes, seconds and
+     * milliseconds between them.
+     */
+    public TimeSpan Minus(DateTime time) {
+        var span = new TimeSpan();
+
+        // There are no differences between them, then return
+        // a zero-time span.
+        if (this == time) {
+            return span;
+        }
+
+        var ts = Timestamp() - time.Timestamp();
+
+        // Set milliseconds.
+        span.setMilliseconds((int) (ts % 1000));
+        ts /= 1000;
+
+        // Set days.
+        span.setDays((int) (ts / 86400));
+        ts %= 86400;
+
+        // Set hours.
+        span.setHours((int) (ts / 3600));
+        ts %= 3600;
+
+        // Set minutes.
+        span.setMinutes((int) (ts / 60));
+        ts %= 60;
+
+        // Set seconds.
+        span.setSeconds((int) ts);
+
+        return span;
     }
 
     /**
