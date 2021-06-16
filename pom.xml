@@ -12,7 +12,7 @@
 
     <groupId>cn.vorbote</groupId>
     <artifactId>time-lib</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <url>https://plugins.vorbote.cn/</url>
 
     <name>VorBotE :: TimeLib</name>
@@ -39,9 +39,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/vorbote/simple-jwt</url>
-        <connection>https://github.com/vorbote/simple-jwt.git</connection>
-        <developerConnection>https://github.com/vorbote/simple-jwt</developerConnection>
+        <url>https://github.com/vorbote/time-lib</url>
+        <connection>https://github.com/vorbote/time-lib.git</connection>
+        <developerConnection>https://github.com/vorbote/time-lib</developerConnection>
     </scm>
 
     <properties>
