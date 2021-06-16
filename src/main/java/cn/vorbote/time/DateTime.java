@@ -11,7 +11,15 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * DateTime class supports useful methods to times.
+ * {@code DateTime} class supports useful methods to times.
+ * The processing of date and time makes us particularly
+ * troubled in Java, so we developed the {@code DateTime}
+ * class and {@code TimeSpan} class that refer to the Date
+ * processing mechanism of the <b>Dotnet</b> platform.
+ * These classes are developed based on Java timestamp and
+ * the Calendar class of the Java platform, and it is
+ * convenient to use by encapsulating some convenient
+ * methods.
  *
  * @author vorbote thills@vorbote.cn
  */
