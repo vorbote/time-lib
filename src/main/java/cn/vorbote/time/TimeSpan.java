@@ -4,7 +4,8 @@ import cn.vorbote.commons.StringUtil;
 import lombok.*;
 
 /**
- * Represents a time interval.
+ * Represents a time interval. We use this class to
+ * show diffs from 2 {@code DateTime} instances.
  *
  * @author vorbote thills@vorbote.cn
  */
