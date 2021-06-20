@@ -107,6 +107,24 @@ public class DateTime implements
     }
 
     /**
+     * Generate a new DateTime instance of {@code current} time.
+     *
+     * @param date A {@code Date} instance.
+     */
+    public DateTime(Date date) {
+        this.timestamp = date.getTime();
+    }
+
+    /**
+     * Generate a new DateTime instance of {@code current} time.
+     *
+     * @param calendar A {@code Calendar} instance.
+     */
+    public DateTime(Calendar calendar) {
+        this.timestamp = calendar.getTimeInMillis();
+    }
+
+    /**
      * Generate a specified {@code DateTime} instance of the date.
      *
      * @param year  The year (1 through 9999).
@@ -467,7 +485,7 @@ public class DateTime implements
      *
      * @param timestamp The timestamp.
      */
-    private void Timestamp(long timestamp) {
+    public void Timestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
