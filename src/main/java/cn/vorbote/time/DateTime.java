@@ -107,6 +107,20 @@ public class DateTime implements
     }
 
     /**
+     * Build a {@code DateTime} instance by java timestamp or
+     * unix timestamp.
+     *
+     * @param timestamp Unix Timestamp or Java Timestamp.
+     */
+    public DateTime(long timestamp) {
+        if (String.valueOf(timestamp).matches("\\d{10}")) { // 对于Unix Timestamp
+            this.timestamp = timestamp * 1000L;
+        } else if (String.valueOf(timestamp).matches("\\d{13}")) { // 对于Java Timestamp
+            this.timestamp = timestamp;
+        }
+    }
+
+    /**
      * Generate a new DateTime instance of {@code current} time.
      *
      * @param date A {@code Date} instance.

@@ -135,4 +135,12 @@ public class TimeSpan {
     public long TotalMilliseconds() {
         return TotalSeconds() * 1000L + milliseconds;
     }
+
+    /**
+     * Get the total hours in this {@code TimeSpan}.
+     * @return The total milliseconds in this {@code TimeSpan}.
+     */
+    public double TotalHours() {
+        return TotalSeconds() / 60. / 60.;
+    }
 }

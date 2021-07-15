@@ -12,7 +12,7 @@
 
     <groupId>cn.vorbote</groupId>
     <artifactId>time-lib</artifactId>
-    <version>1.1.4</version>
+    <version>1.2.0</version>
     <url>https://plugins.vorbote.cn/</url>
 
     <name>VorBotE :: TimeLib</name>
@@ -51,7 +51,7 @@
         <slf4j>1.7.30</slf4j>
         <logback>1.2.3</logback>
         <jwt>3.4.0</jwt>
-        <vorbote-commons>1.5.4</vorbote-commons>
+        <vorbote-commons>1.5.5</vorbote-commons>
         <junit>4.13.1</junit>
     </properties>
 
