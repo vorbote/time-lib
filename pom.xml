@@ -10,9 +10,16 @@
         <version>7</version>
     </parent>
 
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <vorbote-commons>2.0.0.RELEASE</vorbote-commons>
+        <project.version>2.0.0.RELEASE</project.version>
+    </properties>
+
     <groupId>cn.vorbote</groupId>
     <artifactId>time-lib</artifactId>
-    <version>1.2.0</version>
+    <version>${project.version}</version>
     <url>https://plugins.vorbote.cn/</url>
 
     <name>VorBotE :: TimeLib</name>
@@ -44,70 +51,18 @@
         <developerConnection>https://github.com/vorbote/time-lib</developerConnection>
     </scm>
 
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <lombok>1.18.20</lombok>
-        <slf4j>1.7.30</slf4j>
-        <logback>1.2.3</logback>
-        <jwt>3.4.0</jwt>
-        <vorbote-commons>1.5.5</vorbote-commons>
-        <junit>4.13.1</junit>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>cn.vorbote</groupId>
             <artifactId>commons</artifactId>
             <version>${vorbote-commons}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit}</version>
+            <version>4.13.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok}</version>
         </dependency>
     </dependencies>
 

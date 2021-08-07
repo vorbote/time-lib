@@ -1,8 +1,6 @@
 package cn.vorbote.time;
 
-import cn.vorbote.commons.MathUtil;
-import cn.vorbote.commons.StringUtil;
-import cn.vorbote.time.exceptions.TimeOutRangeException;
+import cn.vorbote.commons.except.TimeOutRangeException;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -40,8 +38,8 @@ public class DateTime implements
      */
     private static void check(int year, int month, int date, int hour, int minute, int second, int mills) {
         // The month number should between 1 ~ 12
-        if (MathUtil.IsNotBetween(month, 1, 12)) {
-            throw new TimeOutRangeException(StringUtil.Format("The month: {} is out of range of (1 ~ 12).",
+        if (month <= 0 || month > 12) {
+            throw new TimeOutRangeException(String.format("The month: %d is out of range of (1 ~ 12).",
                     month));
         }
 
@@ -71,29 +69,29 @@ public class DateTime implements
         }
 
         // The month number should between 1 ~ the days in the month
-        if (MathUtil.IsNotBetween(date, 1, dayInTheMonth)) {
-            throw new TimeOutRangeException(StringUtil.Format("The date: {} is out of range of (1 ~ {}).",
+        if (date < 1 || date > dayInTheMonth) {
+            throw new TimeOutRangeException(String.format("The date: %d is out of range of (1 ~ %d).",
                     date, dayInTheMonth));
         }
 
         // Check the hour
-        if (MathUtil.IsNotBetween(hour, 0, 23)) {
-            throw new TimeOutRangeException(StringUtil.Format("The hour: {} is out of range of (0 ~ 23)", hour));
+        if (hour < 0 || hour > 23) {
+            throw new TimeOutRangeException(String.format("The hour: %d is out of range of (0 ~ 23)", hour));
         }
 
         // Check the minute
-        if (MathUtil.IsNotBetween(minute, 0, 59)) {
-            throw new TimeOutRangeException(StringUtil.Format("The minute: {} is out of range of (0 ~ 59)", minute));
+        if (minute < 0 || minute > 59) {
+            throw new TimeOutRangeException(String.format("The minute: %d is out of range of (0 ~ 59)", minute));
         }
 
         // Check the second
-        if (MathUtil.IsNotBetween(second, 0, 59)) {
-            throw new TimeOutRangeException(StringUtil.Format("The second: {} is out of range of (0 ~ 59)", second));
+        if (second < 0 || second > 59) {
+            throw new TimeOutRangeException(String.format("The second: %d is out of range of (0 ~ 59)", second));
         }
 
         // Check the mills
-        if (MathUtil.IsNotBetween(mills, 0, 999)) {
-            throw new TimeOutRangeException(StringUtil.Format("The mills: {} is out of range of (0 ~ 59)", hour));
+        if (mills < 0 || mills > 999) {
+            throw new TimeOutRangeException(String.format("The mills: %d is out of range of (0 ~ 59)", hour));
         }
     }
 

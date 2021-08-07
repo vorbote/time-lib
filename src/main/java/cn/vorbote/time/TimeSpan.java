@@ -1,7 +1,8 @@
 package cn.vorbote.time;
 
-import cn.vorbote.commons.StringUtil;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a time interval. We use this class to
@@ -112,16 +113,13 @@ public class TimeSpan {
 
     @Override
     public String toString() {
-        return StringUtil.Format("{}.{}:{}:{}.{}",
-                days,
-                String.format("%02d", hours),
-                String.format("%02d", minutes),
-                String.format("%02d", seconds),
-                String.format("%03d", milliseconds));
+        return String.format("%d.%02d:%02d:%02d.%03d",
+                days, hours, minutes, seconds, milliseconds);
     }
 
     /**
      * Get the total seconds in this {@code TimeSpan}.
+     *
      * @return The total seconds in this {@code TimeSpan}.
      */
     public long TotalSeconds() {
@@ -130,6 +128,7 @@ public class TimeSpan {
 
     /**
      * Get the total milliseconds in this {@code TimeSpan}.
+     *
      * @return The total milliseconds in this {@code TimeSpan}.
      */
     public long TotalMilliseconds() {
@@ -138,6 +137,7 @@ public class TimeSpan {
 
     /**
      * Get the total hours in this {@code TimeSpan}.
+     *
      * @return The total milliseconds in this {@code TimeSpan}.
      */
     public double TotalHours() {
