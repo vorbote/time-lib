@@ -614,4 +614,24 @@ public class DateTime implements
         var year = calendar.get(Calendar.YEAR);
         return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
     }
+
+    /**
+     * Convert {@code DateTime} instance to {@code Date} instance.
+     *
+     * @return {@code Date} instance.
+     */
+    public Date ToDate() {
+        return new Date(this.Timestamp());
+    }
+
+    /**
+     * Convert {@code DateTime} instance to {@code Calendar} instance.
+     *
+     * @return {@code Calendar} instance.
+     */
+    public Calendar ToCalendar() {
+        var instance = Calendar.getInstance();
+        instance.setTime(this.ToDate());
+        return instance;
+    }
 }
