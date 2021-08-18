@@ -99,6 +99,15 @@ public class DateTime implements
     private String pattern = "yyyy-MM-dd HH:mm:ss";
 
     /**
+     * Getter for timestamp, returns a unix timestamp.
+     *
+     * @return Unix timestamp.
+     */
+    public long getTimestamp() {
+        return timestamp / 1000;
+    }
+
+    /**
      * Generate a new DateTime instance of {@code current} time.
      */
     public DateTime() {

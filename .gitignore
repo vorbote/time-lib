@@ -2,3 +2,7 @@
 /target/
 
 .idea/
+/.classpath
+/.project
+/.apt_generated_tests/
+/.settings/
