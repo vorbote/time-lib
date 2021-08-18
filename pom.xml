@@ -13,8 +13,9 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <vorbote-commons>2.0.0.RELEASE</vorbote-commons>
-        <project.version>2.0.0.RELEASE</project.version>
+
+        <project.version>2.0.2.RELEASE</project.version>
+        <vorbote-commons>2.0.2.RELEASE</vorbote-commons>
     </properties>
 
     <groupId>cn.vorbote</groupId>
