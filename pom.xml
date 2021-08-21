@@ -14,8 +14,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <project.version>2.0.2.RELEASE</project.version>
-        <vorbote-commons>2.0.2.RELEASE</vorbote-commons>
+        <project.version>2.0.4.RELEASE</project.version>
     </properties>
 
     <groupId>cn.vorbote</groupId>
@@ -56,7 +55,7 @@
         <dependency>
             <groupId>cn.vorbote</groupId>
             <artifactId>commons</artifactId>
-            <version>${vorbote-commons}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

@@ -35,6 +35,9 @@ public class DateTime implements
      * @param minute The minute (0 through 59).
      * @param second The second (0 through 59).
      * @param mills  The mills (0 through 999).
+     * @throws TimeOutRangeException If the time is set out the correct
+     *                               range, the exception will be throw
+     *                               out.
      */
     private static void check(int year, int month, int date, int hour, int minute, int second, int mills) {
         // The month number should between 1 ~ 12
@@ -108,7 +111,7 @@ public class DateTime implements
     }
 
     /**
-     * Generate a new DateTime instance of {@code current} time.
+     * Generate a new {@code DateTime} instance of {@code current} time.
      */
     public DateTime() {
     }

@@ -1,8 +1,6 @@
 package cn.vorbote.time;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Represents a time interval. We use this class to
@@ -10,6 +8,8 @@ import lombok.NoArgsConstructor;
  *
  * @author vorbote thills@vorbote.cn
  */
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -20,96 +20,6 @@ public class TimeSpan {
     private int minutes;        // 分钟(0-59)
     private int seconds;        // 秒数(0-59)
     private int milliseconds;   // 毫秒(0-999)
-
-    /**
-     * Getter for field {@code days}.
-     *
-     * @return The value of {@code days}.
-     */
-    public int getDays() {
-        return days;
-    }
-
-    /**
-     * Getter for field {@code hours}.
-     *
-     * @return The value of {@code hours}.
-     */
-    public int getHours() {
-        return hours;
-    }
-
-    /**
-     * Getter for field {@code minutes}.
-     *
-     * @return The value of {@code minutes}.
-     */
-    public int getMinutes() {
-        return minutes;
-    }
-
-    /**
-     * Getter for field {@code seconds}.
-     *
-     * @return The value of {@code seconds}.
-     */
-    public int getSeconds() {
-        return seconds;
-    }
-
-    /**
-     * Getter for field {@code milliseconds}.
-     *
-     * @return The value of {@code milliseconds}.
-     */
-    public int getMilliseconds() {
-        return milliseconds;
-    }
-
-    /**
-     * Setter for field {@code days}.
-     *
-     * @param days The value of {@code days}.
-     */
-    protected void setDays(int days) {
-        this.days = days;
-    }
-
-    /**
-     * Setter for field {@code hours}.
-     *
-     * @param hours The value of {@code hours}.
-     */
-    protected void setHours(int hours) {
-        this.hours = hours;
-    }
-
-    /**
-     * Setter for field {@code minutes}.
-     *
-     * @param minutes The value of {@code minutes}.
-     */
-    protected void setMinutes(int minutes) {
-        this.minutes = minutes;
-    }
-
-    /**
-     * Setter for field {@code seconds}.
-     *
-     * @param seconds The value of {@code seconds}.
-     */
-    protected void setSeconds(int seconds) {
-        this.seconds = seconds;
-    }
-
-    /**
-     * Setter for field {@code milliseconds}.
-     *
-     * @param milliseconds The value of {@code milliseconds}.
-     */
-    protected void setMilliseconds(int milliseconds) {
-        this.milliseconds = milliseconds;
-    }
 
     @Override
     public String toString() {
