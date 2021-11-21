@@ -34,12 +34,11 @@ public class DateTime implements
      * @param hour   The hour (0 through 23).
      * @param minute The minute (0 through 59).
      * @param second The second (0 through 59).
-     * @param mills  The mills (0 through 999).
      * @throws TimeOutRangeException If the time is set out the correct
      *                               range, the exception will be throw
      *                               out.
      */
-    private static void check(int year, int month, int date, int hour, int minute, int second, int mills) {
+    private static void check(int year, int month, int date, int hour, int minute, int second) {
         // The month number should between 1 ~ 12
         if (month <= 0 || month > 12) {
             throw new TimeOutRangeException(String.format("The month: %d is out of range of (1 ~ 12).",
@@ -91,14 +90,16 @@ public class DateTime implements
         if (second < 0 || second > 59) {
             throw new TimeOutRangeException(String.format("The second: %d is out of range of (0 ~ 59)", second));
         }
-
-        // Check the mills
-        if (mills < 0 || mills > 999) {
-            throw new TimeOutRangeException(String.format("The mills: %d is out of range of (0 ~ 59)", hour));
-        }
     }
 
-    private long timestamp = System.currentTimeMillis();
+    /**
+     * Timestamp, use the form of unix time.
+     */
+    private long timestamp = System.currentTimeMillis() / 1000L;
+
+    /**
+     * Specify the way to format the time.
+     */
     private String pattern = "yyyy-MM-dd HH:mm:ss";
 
     /**
@@ -107,7 +108,7 @@ public class DateTime implements
      * @return Unix timestamp.
      */
     public long getTimestamp() {
-        return timestamp / 1000;
+        return timestamp;
     }
 
     /**
@@ -120,14 +121,10 @@ public class DateTime implements
      * Build a {@code DateTime} instance by java timestamp or
      * unix timestamp.
      *
-     * @param timestamp Unix Timestamp or Java Timestamp.
+     * @param timestamp Unix Timestamp.
      */
     public DateTime(long timestamp) {
-        if (String.valueOf(timestamp).matches("\\d{10}")) { // 对于Unix Timestamp
-            this.timestamp = timestamp * 1000L;
-        } else if (String.valueOf(timestamp).matches("\\d{13}")) { // 对于Java Timestamp
-            this.timestamp = timestamp;
-        }
+        this.timestamp = timestamp;
     }
 
     /**
@@ -136,7 +133,7 @@ public class DateTime implements
      * @param date A {@code Date} instance.
      */
     public DateTime(Date date) {
-        this.timestamp = date.getTime();
+        this.timestamp = date.getTime() / 1000L;
     }
 
     /**
@@ -145,7 +142,7 @@ public class DateTime implements
      * @param calendar A {@code Calendar} instance.
      */
     public DateTime(Calendar calendar) {
-        this.timestamp = calendar.getTimeInMillis();
+        this.timestamp = calendar.getTimeInMillis() / 1000L;
     }
 
     /**
@@ -160,14 +157,14 @@ public class DateTime implements
         // Get the instance of calendar.
         var calendar = Calendar.getInstance();
 
-        check(year, month, date, 0, 0, 0, 0);
+        check(year, month, date, 0, 0, 0);
 
         calendar.set(year, month - 1, date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
     }
 
     /**
@@ -181,7 +178,7 @@ public class DateTime implements
      * @param second The second (0 through 59).
      */
     public DateTime(int year, int month, int date, int hour, int minute, int second) {
-        check(year, month, date, hour, minute, second, 0);
+        check(year, month, date, hour, minute, second);
 
         var calendar = Calendar.getInstance();
 
@@ -201,44 +198,7 @@ public class DateTime implements
 
         calendar.set(Calendar.MILLISECOND, 0);
 
-        this.timestamp = calendar.getTimeInMillis();
-    }
-
-    /**
-     * Generate a specified {@code DateTime} instance of the date.
-     *
-     * @param year   The year (1 through 9999).
-     * @param month  The month (1 through 12).
-     * @param date   The day (1 through the number of days in month).
-     * @param hour   The hour (0 through 23).
-     * @param minute The minute (0 through 59).
-     * @param second The second (0 through 59).
-     * @param mills  The mills (0 through 999).
-     */
-    public DateTime(int year, int month, int date, int hour, int minute, int second, int mills) {
-        check(year, month, date, hour, minute, second, mills);
-
-        var calendar = Calendar.getInstance();
-
-        // Set the year, month and date
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month - 1);
-        calendar.set(Calendar.DATE, date);
-
-        // Add the hours to the timestamp
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-
-        // Add the minutes to the timestamp
-        calendar.set(Calendar.MINUTE, minute);
-
-        // Add the second to the timestamp
-        calendar.set(Calendar.SECOND, second);
-
-        // Add the mills to the timestamp
-        calendar.set(Calendar.MILLISECOND, mills);
-
-        // Add the minutes to the timestamp
-        timestamp = calendar.getTimeInMillis();
+        this.timestamp = calendar.getTimeInMillis() / 1000L;
     }
 
     /**
@@ -247,7 +207,16 @@ public class DateTime implements
      * @return The Unix Timestamp of this {@code DateTime} instance.
      */
     public long Unix() {
-        return timestamp / 1000;
+        return timestamp;
+    }
+
+    /**
+     * Get the Java Timestamp of this (@code DateTime} instance.
+     *
+     * @return The Java Timestamp of this {@code DateTime} instance, but will lose the millisecond.
+     */
+    public long Java() {
+        return timestamp * 1000L;
     }
 
     /**
@@ -263,8 +232,7 @@ public class DateTime implements
         calendar.add(Calendar.HOUR, ts.getHours());
         calendar.add(Calendar.MINUTE, ts.getMinutes());
         calendar.add(Calendar.SECOND, ts.getSeconds());
-        calendar.add(Calendar.MILLISECOND, ts.getMilliseconds());
-        this.timestamp = calendar.getTimeInMillis();
+        this.timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -281,14 +249,14 @@ public class DateTime implements
     public DateTime AddDays(double days) {
         // Set the current time to the time of the current instance.
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
+        calendar.setTimeInMillis(timestamp * 1000L);
 
         // Calculate the times.
         var seconds = (int) (days * 24 * 60 * 60);
 
         // Add time
         calendar.add(Calendar.SECOND, seconds);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -305,36 +273,14 @@ public class DateTime implements
     public DateTime AddHours(double hours) {
         // Set the current time to the time of the current instance.
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
+        calendar.setTimeInMillis(timestamp * 1000L);
 
         // Calculate the seconds to be added.
         var seconds = (int) (hours * 60 * 60);
 
         // Add to the calendar instance.
         calendar.add(Calendar.SECOND, seconds);
-        timestamp = calendar.getTimeInMillis();
-        return this;
-    }
-
-    /**
-     * Returns a new {@code DateTime} that adds the specified number
-     * of hours to the value of this instance.
-     *
-     * @param milliseconds A number of whole and fractional
-     *                     millisecond. The value parameter can be
-     *                     negative or positive.
-     * @return An object whose value is the sum of the date and time
-     * represented by this instance and the number of
-     * milliseconds represented by value.
-     */
-    public DateTime AddMilliseconds(int milliseconds) {
-        // Set the current time to the time of the current instance.
-        var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
-
-        // Add to the calendar instance.
-        calendar.add(Calendar.MILLISECOND, milliseconds);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -352,13 +298,13 @@ public class DateTime implements
     public DateTime AddMinutes(double minutes) {
         // Set the current time to the time of the current instance.
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
+        calendar.setTimeInMillis(timestamp * 1000L);
 
         var seconds = (int) (minutes * 60);
 
         // Add to the calendar instance.
         calendar.add(Calendar.SECOND, seconds);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -374,11 +320,11 @@ public class DateTime implements
     public DateTime AddMonths(int months) {
         // Set the current time to the time of the current instance.
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
+        calendar.setTimeInMillis(timestamp * 1000L);
 
         // Add to the calendar instance.
         calendar.add(Calendar.MONTH, months);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -395,11 +341,11 @@ public class DateTime implements
     public DateTime AddSeconds(int seconds) {
         // Set the current time to the time of the current instance.
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
+        calendar.setTimeInMillis(timestamp * 1000L);
 
         // Add to the calendar instance.
         calendar.add(Calendar.SECOND, seconds);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -416,11 +362,11 @@ public class DateTime implements
     public DateTime AddYears(int years) {
         // Set the current time to the time of the current instance.
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timestamp);
+        calendar.setTimeInMillis(timestamp * 1000L);
 
         // Add to the calendar instance.
         calendar.add(Calendar.YEAR, years);
-        timestamp = calendar.getTimeInMillis();
+        timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -431,14 +377,13 @@ public class DateTime implements
      * @return The time after added this {@code TimeSpan}.
      */
     public DateTime Minus(TimeSpan ts) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(timestamp));
+        var calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp * 1000L);
         calendar.add(Calendar.DATE, -ts.getDays());
         calendar.add(Calendar.HOUR, -ts.getHours());
         calendar.add(Calendar.MINUTE, -ts.getMinutes());
         calendar.add(Calendar.SECOND, -ts.getSeconds());
-        calendar.add(Calendar.MILLISECOND, -ts.getMilliseconds());
-        this.timestamp = calendar.getTimeInMillis();
+        this.timestamp = calendar.getTimeInMillis() / 1000L;
         return this;
     }
 
@@ -456,32 +401,8 @@ public class DateTime implements
     public TimeSpan Minus(DateTime time) {
         var span = new TimeSpan();
 
-        // There are no differences between them, then return
-        // a zero-time span.
-        if (this == time) {
-            return span;
-        }
-
-        var ts = Timestamp() - time.Timestamp();
-
-        // Set milliseconds.
-        span.setMilliseconds((int) (ts % 1000));
-        ts /= 1000;
-
-        // Set days.
-        span.setDays((int) (ts / 86400));
-        ts %= 86400;
-
-        // Set hours.
-        span.setHours((int) (ts / 3600));
-        ts %= 3600;
-
-        // Set minutes.
-        span.setMinutes((int) (ts / 60));
-        ts %= 60;
-
-        // Set seconds.
-        span.setSeconds((int) ts);
+        var seconds = this.timestamp - time.timestamp;
+        span.setSeconds((int) seconds);
 
         return span;
     }
@@ -491,8 +412,9 @@ public class DateTime implements
      *
      * @param pattern The formatted String.
      */
-    public void Pattern(String pattern) {
+    public DateTime Pattern(String pattern) {
         this.pattern = pattern;
+        return this;
     }
 
     /**
@@ -509,14 +431,17 @@ public class DateTime implements
      *
      * @param timestamp The timestamp.
      */
-    public void Timestamp(long timestamp) {
+    public DateTime Timestamp(long timestamp) {
         this.timestamp = timestamp;
+        return this;
     }
 
     /**
      * Get the timestamp.
      *
      * @return The timestamp.
+     * @see #Unix()
+     * @see #getTimestamp()
      */
     public long Timestamp() {
         return this.timestamp;
@@ -532,7 +457,7 @@ public class DateTime implements
     @Override
     public String toString() {
         final var formatter = new SimpleDateFormat(pattern);
-        final var date = new Date(timestamp);
+        final var date = new Date(timestamp * 1000L);
         return formatter.format(date);
     }
 
@@ -610,6 +535,7 @@ public class DateTime implements
      * Get the current Date and Time.
      *
      * @return The current Date and Time.
+     * @see #DateTime()
      */
     public static DateTime Now() {
         return new DateTime();
@@ -622,7 +548,7 @@ public class DateTime implements
      */
     public boolean IsLeapYear() {
         var calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(Timestamp());
+        calendar.setTimeInMillis(Timestamp() * 1000L);
         var year = calendar.get(Calendar.YEAR);
         return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
     }
@@ -633,7 +559,7 @@ public class DateTime implements
      * @return {@code Date} instance.
      */
     public Date ToDate() {
-        return new Date(this.Timestamp());
+        return new Date(this.Timestamp() * 1000L);
     }
 
     /**

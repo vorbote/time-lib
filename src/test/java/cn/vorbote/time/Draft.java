@@ -21,15 +21,7 @@ public class Draft {
 
     @Test
     public void test03() {
-        DateTime time = new DateTime(2021, 6, 30);
-        DateTime now = DateTime.Now();
-
-        System.out.println(time.Minus(now));
-
-        var millis = time.Unix();
-
-        millis = millis - time.AddHours(-1).Unix();
-
-        System.out.println(millis);
+        Calendar calendar = Calendar.getInstance();
+        System.out.println("calendar.getTimeInMillis() = " + calendar.getTimeInMillis());
     }
 }

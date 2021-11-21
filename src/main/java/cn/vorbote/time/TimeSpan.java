@@ -19,12 +19,11 @@ public class TimeSpan {
     private int hours;          // 小时(0-23)
     private int minutes;        // 分钟(0-59)
     private int seconds;        // 秒数(0-59)
-    private int milliseconds;   // 毫秒(0-999)
 
     @Override
     public String toString() {
-        return String.format("%d.%02d:%02d:%02d.%03d",
-                days, hours, minutes, seconds, milliseconds);
+        return String.format("%d.%02d:%02d:%02d",
+                days, hours, minutes, seconds);
     }
 
     /**
@@ -34,15 +33,6 @@ public class TimeSpan {
      */
     public long TotalSeconds() {
         return days * 86400L + hours * 3600L + minutes * 60L + seconds;
-    }
-
-    /**
-     * Get the total milliseconds in this {@code TimeSpan}.
-     *
-     * @return The total milliseconds in this {@code TimeSpan}.
-     */
-    public long TotalMilliseconds() {
-        return TotalSeconds() * 1000L + milliseconds;
     }
 
     /**
