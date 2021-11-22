@@ -227,7 +227,7 @@ public class DateTime implements
      */
     public DateTime Add(TimeSpan ts) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(timestamp));
+        calendar.setTime(new Date(timestamp * 1000L));
         calendar.add(Calendar.DATE, ts.getDays());
         calendar.add(Calendar.HOUR, ts.getHours());
         calendar.add(Calendar.MINUTE, ts.getMinutes());
@@ -469,7 +469,7 @@ public class DateTime implements
      */
     public String ToString() {
         final var formatter = new SimpleDateFormat(pattern);
-        final var date = new Date(timestamp);
+        final var date = new Date(timestamp * 1000L);
         return formatter.format(date);
     }
 
